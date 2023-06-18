@@ -1,24 +1,37 @@
-import logo from './logo.svg';
 import './App.css';
+import Form from './components/Form';
+import List from './components/List';
+import { useState, useEffect } from 'react';
 
 function App() {
+  const [newItem, setNewItem] = useState();
+  const [toDos, setToDos] = useState(
+    () => {
+      const local = localStorage.getItem('LIST');
+      if(!local) return [];
+
+      return JSON.parse(local);
+    }
+  );
+
+  function addToDo(title){
+    setToDos([...toDos, { id: crypto.randomUUID(), title, completed: false } ]);
+  }
+
+  useEffect(() => {
+    localStorage.setItem('LIST', JSON.stringify(toDos));
+  }, [toDos]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Form
+        newItem={newItem}
+        setNewItem={setNewItem}
+        addToDo={addToDo}
+      />
+      <h1 className="header">To-Do</h1>
+      <List toDos={toDos} setToDos={setToDos}/>
+    </>
   );
 }
 
